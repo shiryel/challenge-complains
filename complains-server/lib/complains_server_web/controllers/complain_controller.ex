@@ -4,10 +4,16 @@ defmodule CSWeb.ComplainController do
 
   alias CS.Complains
 
-  # TODO: put pagenate if exists
+  defp get_pagination_opts(%{"page" => page, "size" => size}) do
+    %{page: String.to_integer(page), size: String.to_integer(size)}
+  end
 
-  def index(conn, %{"locale" => locale, "company" => company}) do
-    case Complains.list_complains_by_locale_and_company(locale, company) do
+  defp get_pagination_opts(_params), do: %{page: 1, size: 50}
+
+  def index(conn, %{"locale" => locale, "company" => company} = params) do
+    opts = get_pagination_opts(params)
+
+    case Complains.list_complains_by_locale_and_company(locale, company, opts) do
       {:error, error} ->
         conn
         |> put_status(:bad_request)
@@ -19,8 +25,10 @@ defmodule CSWeb.ComplainController do
     end
   end
 
-  def index(conn, %{"locale" => locale}) do
-    case Complains.list_complains_by_locale(locale) do
+  def index(conn, %{"locale" => locale} = params) do
+    opts = get_pagination_opts(params)
+
+    case Complains.list_complains_by_locale(locale, opts) do
       {:error, error} ->
         conn
         |> put_status(:bad_request)
@@ -31,9 +39,10 @@ defmodule CSWeb.ComplainController do
         |> json(result)
     end
   end
-  
-  def index(conn, _params) do
-    result = Complains.list_complains()
+
+  def index(conn, params) do
+    opts = get_pagination_opts(params)
+    result = Complains.list_complains(opts)
     json(conn, result)
   end
 

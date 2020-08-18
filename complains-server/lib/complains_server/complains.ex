@@ -72,7 +72,7 @@ defmodule CS.Complains do
   # UTILS #
   #########
 
-  #A helper that transforms changeset errors into a map of messages.
+  # A helper that transforms changeset errors into a map of messages.
   #    assert {:error, changeset} = Accounts.create_user(%{password: "short"})
   #    assert "password is too short" in errors_on(changeset).password
   #    assert %{password: ["password is too short"]} = errors_on(changeset)
@@ -89,6 +89,7 @@ defmodule CS.Complains do
     case mongo_result do
       {:ok, result} ->
         {:ok, Map.delete(result, "_id")}
+
       any ->
         any
     end
@@ -108,12 +109,16 @@ defmodule CS.Complains do
     iex> list_complains(1, 50)
     [...]
   """
-  @spec list_complains(integer(), integer()) :: find_result()
-  def list_complains(page \\ 1, size \\ 50) do
+  @spec list_complains(%{page: integer(), size: integer()}) :: find_result()
+  def list_complains(opts \\ %{page: 1, size: 50})
+
+  def list_complains(%{page: page, size: size}) when size <= 50 do
     Mongo.find(:mongo, "complains", %{}, skip: (page - 1) * size, limit: size)
     |> Enum.to_list()
     |> Enum.map(&Map.delete(&1, "_id"))
   end
+
+  def list_complains(%{page: page}), do: list_complains(%{page: page, size: 50})
 
   @doc """
   List all complains filtered by a locale
@@ -123,8 +128,10 @@ defmodule CS.Complains do
     iex> list_complains_by_locale(%{country: "brazil", state: "SP", city: "São José do Rio Preto"})
     [...]
   """
-  @spec list_complains_by_locale(%{}, integer(), integer()) :: find_result()
-  def list_complains_by_locale(attrs, page \\ 1, size \\ 50) do
+  @spec list_complains_by_locale(%{}, %{page: integer(), size: integer()}) :: find_result()
+  def list_complains_by_locale(attrs, opts \\ %{page: 1, size: 50})
+
+  def list_complains_by_locale(attrs, %{page: page, size: size}) when size <= 50 do
     changeset = Locale.search_changeset(%Locale{}, attrs)
 
     if changeset.valid? do
@@ -139,6 +146,9 @@ defmodule CS.Complains do
     end
   end
 
+  def list_complains_by_locale(attrs, %{page: page}),
+    do: list_complains_by_locale(attrs, %{page: page, size: 50})
+
   @doc """
   List all complains filtered by a locale and the company info
 
@@ -147,8 +157,16 @@ defmodule CS.Complains do
     iex> list_complains_by_locale(%{country: "brazil", state: "SP", city: "São José do Rio Preto"}, %{name: "Lapfox"})
     [...]
   """
-  @spec list_complains_by_locale_and_company(%{}, %{}, integer(), integer()) :: find_result()
-  def list_complains_by_locale_and_company(locale_attrs, company_attrs, page \\ 1, size \\ 50) do
+  @spec list_complains_by_locale_and_company(%{}, %{}, %{page: integer(), size: integer()}) ::
+          find_result()
+  def list_complains_by_locale_and_company(
+        locale_attrs,
+        company_attrs,
+        opts \\ %{page: 1, size: 50}
+      )
+
+  def list_complains_by_locale_and_company(locale_attrs, company_attrs, %{page: page, size: size})
+      when size <= 50 do
     locale_changeset = Locale.search_changeset(%Locale{}, locale_attrs)
     company_changeset = Company.search_changeset(%Company{}, company_attrs)
 
@@ -167,6 +185,9 @@ defmodule CS.Complains do
       {:error, errors}
     end
   end
+
+  def list_complains_by_locale_and_company(locale_attrs, company_attrs, %{page: page}),
+    do: list_complains_by_locale_and_company(locale_attrs, company_attrs, %{page: page, size: 50})
 
   ##########
   # CREATE #

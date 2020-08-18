@@ -11,7 +11,7 @@ defmodule CS.ComplainsTest do
     title: "A complain",
     description: "Plz read",
     company: %{name: "a company"},
-    locale: %{country: "brazil", state: "SP", city: "São José do Rio Preto"}
+    locale: %{country: "Brazil", state: "SP", city: "São José do Rio Preto"}
   }
 
   @valid_complain_result %{
@@ -19,7 +19,7 @@ defmodule CS.ComplainsTest do
     "description" => "Plz read",
     "locale" => %{
       "city" => "São José do Rio Preto",
-      "country" => "brazil",
+      "country" => "Brazil",
       "state" => "SP"
     },
     "title" => "A complain"
@@ -28,14 +28,14 @@ defmodule CS.ComplainsTest do
   @invalid_complain_by_company_miss %{
     title: "A complain",
     description: "Plz read",
-    locale: %{country: "brazil", state: "SP", city: "São José do Rio Preto"}
+    locale: %{country: "Brazil", state: "SP", city: "São José do Rio Preto"}
   }
 
   @invalid_complain_by_company_name_miss %{
     title: "A complain",
     description: "Plz read",
     company: %{},
-    locale: %{country: "brazil", state: "SP", city: "São José do Rio Preto"}
+    locale: %{country: "Brazil", state: "SP", city: "São José do Rio Preto"}
   }
 
   @invalid_complain_by_locale_miss %{
@@ -91,11 +91,25 @@ defmodule CS.ComplainsTest do
       assert [@valid_complain_result] == result
     end
 
+    test "(valid) list_complains/2 with page opts" do
+      Complains.create_complain(@valid_complain)
+      result = Complains.list_complains(%{page: 2, size: 4})
+
+      assert [] == result
+    end
+
     test "(valid) list_complains_by_locale/3" do
       Complains.create_complain(@valid_complain)
       result = Complains.list_complains_by_locale(@valid_complain.locale)
 
       assert [@valid_complain_result] == result
+    end
+
+    test "(valid) list_complains_by_locale/3 with page opts" do
+      Complains.create_complain(@valid_complain)
+      result = Complains.list_complains_by_locale(@valid_complain.locale, %{size: 5, page: 10})
+
+      assert [] == result
     end
 
     test "(valid) list_complains_by_locale_and_company/4" do
@@ -108,6 +122,20 @@ defmodule CS.ComplainsTest do
         )
 
       assert [@valid_complain_result] == result
+    end
+
+    test "(valid) list_complains_by_locale_and_company/4 with page opts" do
+      Complains.create_complain(@valid_complain)
+
+      result =
+        Complains.list_complains_by_locale_and_company(
+          @valid_complain.locale,
+          @valid_complain.company,
+          %{page: 50,
+          size: 60}
+        )
+
+      assert [] == result
     end
 
     test "(invalid locale country) list_complains_by_locale/3" do
