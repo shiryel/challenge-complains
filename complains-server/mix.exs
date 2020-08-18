@@ -41,6 +41,7 @@ defmodule CS.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:ecto, "~> 3.4"},
       {:mongodb, "~> 0.5"},
+      {:corsica, "~> 1.0"},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false}

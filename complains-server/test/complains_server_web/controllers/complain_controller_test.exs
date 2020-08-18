@@ -2,10 +2,10 @@ defmodule CSWeb.ComplainControllerTest do
   use CSWeb.ConnCase
 
   @valid_complain %{
-    title: "A complain",
-    description: "Plz read",
-    company: %{name: "a company"},
-    locale: %{country: "Brazil", state: "SP", city: "São José do Rio Preto"}
+    "title" => "A complain",
+    "description" => "Plz read",
+    "company" => %{"name" => "a company"},
+    "locale" => %{"country" => "Brazil", "state" => "SP", "city" => "São José do Rio Preto"}
   }
 
   @invalid_complain_by_company_miss %{
@@ -58,12 +58,12 @@ defmodule CSWeb.ComplainControllerTest do
   describe "index" do
     test "(valid) list all complains", %{conn: conn} do
       conn = get(conn, Routes.complain_path(conn, :index))
-      assert json_response(conn, 200) == [@complain_result]
+      assert Enum.member?(json_response(conn, 200), @complain_result)
     end
 
     test "(valid) list all complains with pagination", %{conn: conn} do
       conn = get(conn, Routes.complain_path(conn, :index), %{page: 1, size: 50})
-      assert json_response(conn, 200) == [@complain_result]
+      assert Enum.member?(json_response(conn, 200), @complain_result)
     end
 
     test "(valid) list all complains with pagination without results", %{conn: conn} do
@@ -73,12 +73,12 @@ defmodule CSWeb.ComplainControllerTest do
 
     test "(valid) list all complains with invalid pagination", %{conn: conn} do
       conn = get(conn, Routes.complain_path(conn, :index), %{page: 1, size: 100})
-      assert json_response(conn, 200) == [@complain_result]
+      assert Enum.member?(json_response(conn, 200), @complain_result)
     end
 
     test "(valid) list all complains with negative pagination size", %{conn: conn} do
       conn = get(conn, Routes.complain_path(conn, :index), %{page: 1, size: -50})
-      assert json_response(conn, 200) == [@complain_result]
+      assert Enum.member?(json_response(conn, 200), @complain_result)
     end
   end
 
@@ -86,7 +86,7 @@ defmodule CSWeb.ComplainControllerTest do
     test "(valid) create a new post returns 200 and the created value", %{conn: conn} do
       conn = post(conn, Routes.complain_path(conn, :create), @valid_complain)
 
-      assert json_response(conn, 200) == @complain_result
+      assert json_response(conn, 200) == %{"acknowledged" => true}
     end
 
     test "(invalid locale) returns 400 and the error value", %{conn: conn} do

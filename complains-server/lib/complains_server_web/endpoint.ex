@@ -47,5 +47,12 @@ defmodule CSWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  if Mix.env() in [:dev, :test] do
+    plug Corsica, origins: "*", allow_headers: ["content-type"]
+  else
+    plug Corsica, origins: "https://foo.com"
+  end
+
   plug CSWeb.Router
 end

@@ -55,7 +55,7 @@ defmodule CS.ComplainsTest do
     test "(valid) create_complain/1" do
       result = Complains.create_complain(@valid_complain)
 
-      assert {:ok, @valid_complain_result} == result
+      assert {:ok, %{acknowledged: true}} == result
     end
 
     test "(invalid company) create_complain/1" do
@@ -88,12 +88,12 @@ defmodule CS.ComplainsTest do
       Complains.create_complain(@valid_complain)
       result = Complains.list_complains()
 
-      assert [@valid_complain_result] == result
+      assert Enum.member?(result, @valid_complain_result)
     end
 
     test "(valid) list_complains/2 with page opts" do
       Complains.create_complain(@valid_complain)
-      result = Complains.list_complains(%{page: 2, size: 4})
+      result = Complains.list_complains(%{page: 2000000, size: 4})
 
       assert [] == result
     end
@@ -102,12 +102,12 @@ defmodule CS.ComplainsTest do
       Complains.create_complain(@valid_complain)
       result = Complains.list_complains_by_locale(@valid_complain.locale)
 
-      assert [@valid_complain_result] == result
+      assert Enum.member?(result, @valid_complain_result)
     end
 
     test "(valid) list_complains_by_locale/3 with page opts" do
       Complains.create_complain(@valid_complain)
-      result = Complains.list_complains_by_locale(@valid_complain.locale, %{size: 5, page: 10})
+      result = Complains.list_complains_by_locale(@valid_complain.locale, %{size: 5, page: 1000000})
 
       assert [] == result
     end
@@ -121,7 +121,7 @@ defmodule CS.ComplainsTest do
           @valid_complain.company
         )
 
-      assert [@valid_complain_result] == result
+      assert Enum.member?(result, @valid_complain_result)
     end
 
     test "(valid) list_complains_by_locale_and_company/4 with page opts" do
@@ -131,7 +131,7 @@ defmodule CS.ComplainsTest do
         Complains.list_complains_by_locale_and_company(
           @valid_complain.locale,
           @valid_complain.company,
-          %{page: 50,
+          %{page: 5000000,
           size: 60}
         )
 
@@ -154,7 +154,7 @@ defmodule CS.ComplainsTest do
           @valid_complain.company
         )
 
-      assert [@valid_complain_result] == result
+      assert Enum.member?(result, @valid_complain_result)
     end
 
     test "(invalid locale country) list_complains_by_locale_and_company/4" do
@@ -166,7 +166,7 @@ defmodule CS.ComplainsTest do
           @invalid_complain_by_locale_country_miss.company
         )
 
-      assert [@valid_complain_result] == result
+      assert Enum.member?(result, @valid_complain_result)
     end
 
     test "(invalid locale country and company name) list_complains_by_locale_and_company/4" do

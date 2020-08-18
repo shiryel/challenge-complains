@@ -85,10 +85,17 @@ defmodule CS.Complains do
   end
 
   # Remove the "_id" from the mongo results
+  # Remove the :inserted_id from the mongo insertions results
   defp transform_remove_id(mongo_result) do
     case mongo_result do
       {:ok, result} ->
-        {:ok, Map.delete(result, "_id")}
+        result = 
+          result
+          |> Map.from_struct()
+          |> Map.delete("_id")
+          |> Map.delete(:inserted_id)
+
+        {:ok, result}
 
       any ->
         any
@@ -205,10 +212,7 @@ defmodule CS.Complains do
     changeset = Complain.changeset(%Complain{}, attrs)
 
     if changeset.valid? do
-      Mongo.find_one_and_replace(:mongo, "complains", %{}, changeset.changes,
-        return_document: :after,
-        upsert: true
-      )
+      Mongo.insert_one(:mongo, "complains", changeset.changes)
       |> transform_remove_id()
     else
       {:error, errors_on(changeset)}
