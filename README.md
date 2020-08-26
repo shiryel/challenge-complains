@@ -5,7 +5,7 @@
 - Backend made with mongodb as recomended (run with: `podman run -d --name mongodb -p 27017:27017 mongo`)
 - Tests on complains-server/test, run with mix test
 - Docs can be generated with `mix docs` on complains-server
-- Brainstorm is the initial idea, but currently I dont have more free time
+- Brainstorm is the initial idea, but currently I dont have more free time (gamedev...)
 
 ## Deploy
 
