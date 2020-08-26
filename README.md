@@ -15,4 +15,4 @@ You have 3 options to deploy the backend server:
 
 2 - Make a dockerfile and use kubernets to scale the compiled BEAM (just use this: https://www.freecodecamp.org/news/learn-kubernetes-in-under-3-hours-a-detailed-guide-to-orchestrating-containers-114ff420e882/ )
 
-keep in mind that one server (c5.4xlarge) can handle 30k transactions per second (and if you use the channels... well...)
+keep in mind that one server (c5.4xlarge) can handle ~30k transactions per second (and if you use the channels... well...)
