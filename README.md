@@ -9,7 +9,7 @@
 
 ## Deploy
 
-You have 3 options to deploy the backend server:
+You have 2 options to deploy the backend server:
 
 1 - Just put the compiled BEAM on each server and configure using the BEAM shells
 
