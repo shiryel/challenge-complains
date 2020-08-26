@@ -51,7 +51,7 @@ defmodule CSWeb.Endpoint do
   if Mix.env() in [:dev, :test] do
     plug Corsica, origins: "*", allow_headers: ["content-type"]
   else
-    plug Corsica, origins: "https://foo.com"
+    plug Corsica, origins: "http://localhost:3000"
   end
 
   plug CSWeb.Router

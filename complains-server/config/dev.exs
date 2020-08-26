@@ -18,7 +18,7 @@ config :complains_server, :db,
   database: "dev",
   pool_size: 20,
   seeds: [
-    "0.0.0.0:27017"
+    "localhost:27017"
   ]
 
 # ## SSL Support
