@@ -1,0 +1,41 @@
+name: Code quality [CI]
+
+on: 
+  push:
+    paths:
+      - '.github/workflows/server_test.yml'
+      - 'complains-server/**'
+  pull_request:
+    paths:
+      - '.github/workflows/server_test.yml'
+      - 'complains-server/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.4
+        otp-version: 23
+
+    - name: Get deps
+      run: |
+        cd complains-server/
+        mix local.rebar --force
+        mix local.hex --force
+        mix deps.get
+        
+    - name: Run Credo
+      run: |
+        cd complains-server/
+        mix credo
+
+    - name: Run Dialyzer
+      run: |
+        cd complains-server/
+        mix dialyzer
