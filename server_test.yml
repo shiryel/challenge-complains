@@ -1,0 +1,42 @@
+name: Test [CI]
+
+on: 
+  push:
+    paths:
+      - '.github/workflows/server_test.yml'
+      - 'complains-server/**'
+  pull_request:
+    paths:
+      - '.github/workflows/server_test.yml'
+      - 'complains-server/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.4
+        otp-version: 23
+
+    - name: Get deps and Run test
+      run: |
+        cd complains-server/
+        mix local.rebar --force
+        mix local.hex --force
+        mix deps.get
+        mix test
